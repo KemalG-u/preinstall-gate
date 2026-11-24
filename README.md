@@ -1,6 +1,6 @@
 > 🚧 **Status: active development.** It works for the author; interfaces may change.
 
-# urun-tani ("Ürün Tanı · Kapı")
+# preinstall-gate ("Ürün Tanı · Kapı", Turkish for "Product Inspection · Gate")
 
 [Türkçe README](README.tr.md)
 
@@ -22,7 +22,7 @@ Installing agent tools and skills means running someone else's code with your fi
 
 ## Quick start
 
-Requirements: Node.js 22.18 or newer. Python 3.12 is needed by some analysis paths. The isolated trials were written for Windows with WSL2.
+Requirements: Node.js 22.18 or newer. Python 3.12 is needed by some analysis paths (set `URUN_TANI_PYTHON` to the interpreter to use if `python` is not on your PATH). The isolated trials were written for Windows with WSL2.
 
 ```sh
 npm start
@@ -47,7 +47,7 @@ The skipped test checks a real machine (WSL distributions, `gh` login, a local r
 - **Isolation and WSL tests are not done yet.** The isolation layer is written but has not had a full independent test pass. Do not treat a "gate" trial as a security boundary or as proof that a tool is safe.
 - Static analysis only reports what is visible in the code and descriptions it was given. A clean report is not a guarantee.
 - Written and tried on Windows only. Linux and macOS are untested; CI runs on Windows only.
-- The built-in "Agentic OS reference example" links in the UI point to files that are not part of this repository and will not open.
+- The built-in "Agentic OS reference example" links in the UI point to files that are not part of this repository and will not open. The lab's "Agentic OS" sample needs a helper module that is not included either, so the lab offers only the document-finder sample.
 - Interface language is Turkish only.
 - The repository-lab test downloads real public repositories, so it depends on network and upstream availability.
 

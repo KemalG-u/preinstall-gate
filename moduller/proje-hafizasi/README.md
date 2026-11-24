@@ -15,7 +15,7 @@ Sıfır dış paket bağımlılığıyla (`node_modules` istemez) her projeye te
 
 ```bash
 # Yeni bir projede sıfırdan başlatmak için:
-node moduller/proje-hafizasi/src/cli.cjs baslat --kok "D:/yeni-projem" --proje "Yeni Projem" --hedef "Projenin sade Türkçe amacı"
+node moduller/proje-hafizasi/src/cli.cjs baslat --kok "/path/to/your-new-project" --proje "Yeni Projem" --hedef "Projenin sade Türkçe amacı"
 
 # Durumu ve kanıt sağlığını kontrol etmek için:
 node moduller/proje-hafizasi/src/cli.cjs durum --kok .

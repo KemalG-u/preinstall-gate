@@ -4,7 +4,14 @@ const { createHash } = require('node:crypto');
 const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const { isDeepStrictEqual } = require('node:util');
-const { createChainedSession, dispatchChainedEvent } = require('../denetim/kurtarma/teslim-7-zincir-deney-03-astra/tek-yol-sentetik-model.cjs');
+// The chained-session helper behind the Agentic OS sample is not part of this repository
+// (the example product was left out on purpose, see THIRD-PARTY.md). Without it only the document-finder sample is offered.
+let chained = null;
+try {
+  chained = require('../denetim/kurtarma/teslim-7-zincir-deney-03-astra/tek-yol-sentetik-model.cjs');
+} catch (error) {
+  if (error?.code !== 'MODULE_NOT_FOUND') throw error;
+}
 const { gateFlow } = require('./kapi-akis.cjs');
 const { v1: documentFinder } = require('./kapi-ornek.cjs');
 
@@ -14,7 +21,7 @@ const agenticMode = 'Örnek verilerle kurulum denemesi';
 const documentMode = 'Örnek dosyalarla gerçek araç denemesi';
 
 const samples = [
-  { id: AGENTIC, title: 'Agentic OS', description: 'Codex bulunduğunda kurulum ekranında ne değişiyor?' },
+  ...(chained ? [{ id: AGENTIC, title: 'Agentic OS', description: 'Codex bulunduğunda kurulum ekranında ne değişiyor?' }] : []),
   { id: DOCUMENTS, title: 'Belge Bulucu', description: 'Yazdığın kelimeyle hangi örnek belgeler eşleşiyor?' },
 ];
 
@@ -41,6 +48,8 @@ function fail(status, message) {
 }
 
 function openAgenticSource() {
+  if (!chained) fail(404, 'Bu örnek bu kopyada bulunmuyor.');
+  const { createChainedSession, dispatchChainedEvent } = chained;
   const { session, ...initial } = createChainedSession();
   let current = initial;
   function send(type, payload) {

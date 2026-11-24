@@ -20,13 +20,12 @@ function sha256(content) {
 }
 
 function resolvePythonExecutable() {
+  if (process.env.URUN_TANI_PYTHON) return process.env.URUN_TANI_PYTHON;
   if (process.platform !== 'win32') return 'python3';
   const localAppData = process.env.LOCALAPPDATA || (process.env.USERPROFILE ? path.join(process.env.USERPROFILE, 'AppData', 'Local') : '');
   const candidates = [
     localAppData && path.join(localAppData, 'Programs', 'Python', 'Python312', 'python.exe'),
     localAppData && path.join(localAppData, 'Programs', 'Python', 'Python311', 'python.exe'),
-    'C:\\Python312\\python.exe',
-    'C:\\Python314\\python.exe',
   ].filter(Boolean);
   for (const candidate of candidates) {
     try {

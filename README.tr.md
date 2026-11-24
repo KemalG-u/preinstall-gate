@@ -1,6 +1,6 @@
 > 🚧 **Durum: aktif geliştirme.** Yazarın kullanımında çalışıyor; arayüzler değişebilir.
 
-# urun-tani ("Ürün Tanı · Kapı")
+# preinstall-gate ("Ürün Tanı · Kapı")
 
 [English README](README.md)
 
@@ -16,7 +16,7 @@ Bir yapay zekâ aracını, beceriyi ya da MCP sunucusunu **kurmadan önce** ince
 
 ## Hızlı başlangıç
 
-Gereksinim: Node.js 22.18 ve üstü. Bazı analiz yolları Python 3.12 ister. Yalıtılmış denemeler Windows + WSL2 için yazıldı.
+Gereksinim: Node.js 22.18 ve üstü. Bazı analiz yolları Python 3.12 ister (`python` PATH'te değilse kullanılacak yorumlayıcıyı `URUN_TANI_PYTHON` ile verin). Yalıtılmış denemeler Windows + WSL2 için yazıldı.
 
 ```sh
 npm start
@@ -39,7 +39,7 @@ Atlanan test gerçek makineyi sınar (WSL dağıtımları, `gh` oturumu, yerel y
 - **Yalıtım ve WSL testleri henüz yapılmadı.** Yalıtım katmanı yazıldı ama bağımsız ve tam bir test turundan geçmedi. "Kapı" denemesini güvenlik sınırı ya da aracın güvenli olduğunun kanıtı saymayın.
 - Statik analiz yalnız verilen kodda ve açıklamalarda görünenleri bildirir; temiz rapor garanti değildir.
 - Yalnız Windows'ta yazıldı ve denendi. Linux ve macOS denenmedi; CI yalnız Windows'ta koşar.
-- Arayüzdeki "Agentic OS örneği" bağlantıları bu depoda bulunmayan dosyalara gider, açılmaz.
+- Arayüzdeki "Agentic OS örneği" bağlantıları bu depoda bulunmayan dosyalara gider, açılmaz. Laboratuvardaki "Agentic OS" örneği de depoda bulunmayan bir yardımcı modül ister; laboratuvar yalnız belge bulucu örneğini sunar.
 - Arayüz yalnız Türkçe.
 - Depo laboratuvarı testi gerçek açık depoları indirir; ağa ve kaynak depoların ayakta olmasına bağlıdır.
 
