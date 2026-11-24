@@ -1,0 +1,23 @@
+{
+  "name": "proje-hafizasi",
+  "version": "1.0.0",
+  "description": "Her projeye tak-çıkar bağımsız Proje Hafızası, Kanıtlı İş Takibi, Fikir Park Yeri, Çoklu Yapay Zeka Devir-Teslim ve Canlı Görsel Pano modülü (sıfır dış paket bağımlılıklı).",
+  "main": "./src/index.cjs",
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs",
+      "require": "./src/index.cjs"
+    }
+  },
+  "bin": {
+    "proje-hafizasi": "./src/cli.cjs"
+  },
+  "scripts": {
+    "test": "node --test test/proje-hafizasi.test.cjs",
+    "pano": "node src/cli.cjs pano",
+    "durum": "node src/cli.cjs durum"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

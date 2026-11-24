@@ -1,0 +1,27 @@
+{
+  "name": "model-kapisi",
+  "version": "1.2.0",
+  "description": "Bağımsız, sıfır bağımlılıklı, tak-çıkar evrensel yapay zekâ model ve CLI ajan maymuncuk kapısı (keşif, duyu/yetenek filtreleri, devre kesici, .env havuzu ve güvenlik kilidi)",
+  "main": "./src/index.cjs",
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs",
+      "require": "./src/index.cjs",
+      "default": "./src/index.cjs"
+    },
+    "./kayit-defteri": "./src/kayit-defteri.cjs",
+    "./kesif": "./src/kesif.cjs",
+    "./rol-cozucu": "./src/rol-cozucu.cjs",
+    "./saglik-hafizasi": "./src/saglik-hafizasi.cjs",
+    "./ortam-okuyucu": "./src/ortam-okuyucu.cjs",
+    "./guvenlik": "./src/guvenlik.cjs"
+  },
+  "scripts": {
+    "test": "node --test test/faz1-kesif.test.cjs",
+    "kesif": "node src/cli-kesif.cjs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "private": true
+}

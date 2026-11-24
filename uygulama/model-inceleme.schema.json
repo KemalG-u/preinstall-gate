@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "properties": {
+    "overview": {
+      "type": ["object", "null"],
+      "properties": {
+        "purpose": { "type": "string" },
+        "usage": { "type": "string" },
+        "example": { "$ref": "#/$defs/example" },
+        "evidence": { "$ref": "#/$defs/source" },
+        "guide": { "$ref": "#/$defs/guide" }
+      },
+      "required": ["purpose", "usage", "example", "evidence", "guide"],
+      "additionalProperties": false
+    },
+    "jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
+          "output": { "type": "string" },
+          "consumer": { "type": "string" },
+          "trigger": { "type": "string" },
+          "example": { "$ref": "#/$defs/example" },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string" },
+                "line": { "type": "integer" },
+                "quote": { "type": "string" },
+                "role": { "type": "string", "enum": ["producer", "consumer", "trigger"] },
+                "label": { "type": "string" }
+              },
+              "required": ["path", "line", "quote", "role", "label"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["title", "summary", "output", "consumer", "trigger", "example", "evidence"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["overview", "jobs"],
+  "additionalProperties": false,
+  "$defs": {
+    "guide": {
+      "type": ["object", "null"],
+      "properties": {
+        "situation": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "evidence": { "$ref": "#/$defs/source" }
+            },
+            "required": ["title", "description", "evidence"],
+            "additionalProperties": false
+          }
+        },
+        "payoff": { "type": "string" },
+        "payoffEvidence": { "$ref": "#/$defs/source" }
+      },
+      "required": ["situation", "steps", "payoff", "payoffEvidence"],
+      "additionalProperties": false
+    },
+    "example": {
+      "type": ["object", "null"],
+      "properties": {
+        "input": { "type": "string" },
+        "output": { "type": "string" },
+        "evidence": { "$ref": "#/$defs/source" }
+      },
+      "required": ["input", "output", "evidence"],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "line": { "type": "integer" },
+        "quote": { "type": "string" }
+      },
+      "required": ["path", "line", "quote"],
+      "additionalProperties": false
+    }
+  }
+}

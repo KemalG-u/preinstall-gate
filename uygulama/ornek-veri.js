@@ -1,0 +1,1 @@
+globalThis.hermesExample = {"detected":false};

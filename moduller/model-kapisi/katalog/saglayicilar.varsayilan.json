@@ -1,0 +1,1079 @@
+{
+  "schemaVersion": 3,
+  "updatedAt": "2026-11-16",
+  "knownCapabilities": [
+    "text",
+    "vision",
+    "json_schema",
+    "tools",
+    "reasoning",
+    "streaming",
+    "embedding",
+    "audio",
+    "code_agent"
+  ],
+  "capabilityRoles": {
+    "hizli-ucuz": {
+      "title": "Hızlı ve Ekonomik",
+      "description": "Kısa özetleme, ön sınıflandırma, etiketleme ve ucuz tarama işleri.",
+      "minContextWindow": 16000,
+      "requiredCapabilities": ["text"]
+    },
+    "dengeli": {
+      "title": "Dengeli Anlatım",
+      "description": "Modül açıklaması, günlük dil çevirisi, akış özeti ve standart analiz işleri.",
+      "minContextWindow": 32000,
+      "requiredCapabilities": ["text"]
+    },
+    "derin-mimari": {
+      "title": "Derin Mimari ve Akıl Yürütme",
+      "description": "Büyük ürünleri anlamlı organlara ayırma, iddia-gerçeklik (README vs kod) denetimi ve zor kararlar.",
+      "minContextWindow": 64000,
+      "requiredCapabilities": ["text", "reasoning"]
+    },
+    "kod-sokucu": {
+      "title": "Özellik Ayıklama ve Kod Nakli",
+      "description": "Seçilen modülün bağımlılıklarını çözüp başka bir projeye uyarlanabilir tarif/kod paketine dönüştürme.",
+      "minContextWindow": 32000,
+      "requiredCapabilities": ["text"]
+    },
+    "uzun-baglam": {
+      "title": "Büyük Depo / Uzun Bağlam İncelemesi",
+      "description": "120.000+ token üstü çok dosyalı proje özetlerini tek pencerede işleyebilen geniş bağlamlı modeller.",
+      "minContextWindow": 120000,
+      "requiredCapabilities": ["text"]
+    },
+    "gorsel-okuyucu": {
+      "title": "Görsel / Ekran ve Diyagram Analizi",
+      "description": "Ekran görüntülerini, arayüz tasarımlarını ve mimari şemaları okuyup çözümleme.",
+      "minContextWindow": 32000,
+      "requiredCapabilities": ["text", "vision"]
+    },
+    "vektor-gomme": {
+      "title": "Metin ve Kod Vektörleştirme (Embedding)",
+      "description": "Büyük kod tabanlarında veya belgelerde anlamsal arama için vektör üretimi.",
+      "minContextWindow": 8000,
+      "requiredCapabilities": ["embedding"]
+    }
+  },
+  "providers": [
+    {
+      "id": "github-models",
+      "title": "GitHub Models (GitHub Hesabıyla Ücretsiz / Dahil Modeller)",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_or_free_tier",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "GitHub hesabı / gh CLI ücretsiz geliştirici kotası veya Copilot planı",
+      "baseUrl": "https://models.inference.ai.azure.com",
+      "envBaseUrl": "GITHUB_MODELS_BASE_URL",
+      "authEnvVars": ["GITHUB_MODELS_TOKEN", "GITHUB_TOKEN", "GH_TOKEN"],
+      "cliTokenBridge": {
+        "binary": "gh",
+        "statusArgs": ["auth", "token"],
+        "tokenArgs": ["auth", "token"]
+      },
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "gpt-4o-mini",
+        "dengeli": "gpt-4o",
+        "derin-mimari": "DeepSeek-R1",
+        "kod-sokucu": "gpt-4o",
+        "uzun-baglam": "gpt-4o",
+        "gorsel-okuyucu": "gpt-4o",
+        "vektor-gomme": "text-embedding-3-small"
+      },
+      "models": [
+        {
+          "id": "gpt-4o-mini",
+          "title": "GPT-4o Mini (GitHub Models)",
+          "roles": ["hizli-ucuz", "dengeli", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "gpt-4o",
+          "title": "GPT-4o (GitHub Models)",
+          "roles": ["dengeli", "kod-sokucu", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "DeepSeek-R1",
+          "title": "DeepSeek R1 (GitHub Models)",
+          "roles": ["derin-mimari", "kod-sokucu"],
+          "capabilities": ["text", "reasoning", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "text-embedding-3-small",
+          "title": "Text Embedding 3 Small (GitHub Models)",
+          "roles": ["vektor-gomme"],
+          "capabilities": ["embedding"],
+          "trainsOnData": false,
+          "contextWindow": 8191,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        }
+      ]
+    },
+    {
+      "id": "openrouter",
+      "title": "OpenRouter (Evrensel API Yönlendirici)",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_api",
+      "privacyTier": "mixed_provider_policy",
+      "payerLabel": "OpenRouter kredisi (kullandıkça öde / :free modeller ücretsiz)",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "envBaseUrl": "OPENROUTER_BASE_URL",
+      "authEnvVars": ["OPENROUTER_API_KEY"],
+      "ccrProviderAliases": ["openrouter"],
+      "modelsEndpoint": "/models",
+      "supportsLivePricing": true,
+      "roleDefaults": {
+        "hizli-ucuz": "z-ai/glm-4.5-air:free",
+        "dengeli": "deepseek/deepseek-chat",
+        "derin-mimari": "deepseek/deepseek-r1",
+        "kod-sokucu": "qwen/qwen3-coder:free",
+        "uzun-baglam": "deepseek/deepseek-chat",
+        "gorsel-okuyucu": "google/gemini-2.5-flash"
+      },
+      "models": [
+        {
+          "id": "z-ai/glm-4.5-air:free",
+          "title": "GLM 4.5 Air (Ücretsiz)",
+          "roles": ["hizli-ucuz", "dengeli"],
+          "capabilities": ["text", "tools", "streaming"],
+          "trainsOnData": true,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "qwen/qwen3-coder:free",
+          "title": "Qwen 3 Coder (Ücretsiz)",
+          "roles": ["hizli-ucuz", "kod-sokucu"],
+          "capabilities": ["text", "tools", "streaming"],
+          "trainsOnData": true,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "openai/gpt-oss-120b:free",
+          "title": "GPT-OSS 120B (Ücretsiz)",
+          "roles": ["hizli-ucuz", "dengeli", "derin-mimari"],
+          "capabilities": ["text", "reasoning", "tools", "streaming"],
+          "trainsOnData": true,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "deepseek/deepseek-chat",
+          "title": "DeepSeek Chat (OpenRouter)",
+          "roles": ["hizli-ucuz", "dengeli", "uzun-baglam"],
+          "capabilities": ["text", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.27,
+          "outputUsdPer1M": 1.1
+        },
+        {
+          "id": "deepseek/deepseek-r1",
+          "title": "DeepSeek R1 (OpenRouter)",
+          "roles": ["derin-mimari", "kod-sokucu"],
+          "capabilities": ["text", "reasoning", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.55,
+          "outputUsdPer1M": 2.19
+        },
+        {
+          "id": "google/gemini-2.5-flash",
+          "title": "Gemini 2.5 Flash (OpenRouter)",
+          "roles": ["dengeli", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 1000000,
+          "inputUsdPer1M": 0.15,
+          "outputUsdPer1M": 0.6
+        }
+      ]
+    },
+    {
+      "id": "nvidia-nim",
+      "title": "NVIDIA NIM (DeepSeek / Llama / Qwen)",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_or_free_tier",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "NVIDIA NIM geliştirici kotası / API kredisi",
+      "baseUrl": "https://integrate.api.nvidia.com/v1",
+      "envBaseUrl": "NVIDIA_BASE_URL",
+      "authEnvVars": ["NVIDIA_API_KEY", "NIM_API_KEY"],
+      "ccrProviderAliases": ["nvidia", "nim"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "meta/llama-3.3-70b-instruct",
+        "dengeli": "deepseek-ai/deepseek-v3.1",
+        "derin-mimari": "deepseek-ai/deepseek-r1",
+        "kod-sokucu": "qwen/qwen2.5-coder-32b-instruct",
+        "uzun-baglam": "deepseek-ai/deepseek-v3.1",
+        "gorsel-okuyucu": "meta/llama-3.2-90b-vision-instruct",
+        "vektor-gomme": "nvidia/nv-embedqa-e5-v5"
+      },
+      "models": [
+        {
+          "id": "deepseek-ai/deepseek-r1",
+          "title": "DeepSeek R1 (NVIDIA NIM)",
+          "roles": ["derin-mimari", "kod-sokucu"],
+          "capabilities": ["text", "reasoning", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "deepseek-ai/deepseek-v3.1",
+          "title": "DeepSeek V3.1 (NVIDIA NIM)",
+          "roles": ["dengeli", "uzun-baglam", "derin-mimari"],
+          "capabilities": ["text", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "meta/llama-3.3-70b-instruct",
+          "title": "Llama 3.3 70B Instruct (NVIDIA NIM)",
+          "roles": ["hizli-ucuz", "dengeli", "uzun-baglam"],
+          "capabilities": ["text", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "meta/llama-3.2-90b-vision-instruct",
+          "title": "Llama 3.2 90B Vision (NVIDIA NIM)",
+          "roles": ["gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "qwen/qwen2.5-coder-32b-instruct",
+          "title": "Qwen 2.5 Coder 32B (NVIDIA NIM)",
+          "roles": ["kod-sokucu", "dengeli"],
+          "capabilities": ["text", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 32768,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "nvidia/nv-embedqa-e5-v5",
+          "title": "NV-EmbedQA E5 v5",
+          "roles": ["vektor-gomme"],
+          "capabilities": ["embedding"],
+          "trainsOnData": false,
+          "contextWindow": 8192,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        }
+      ]
+    },
+    {
+      "id": "deepseek",
+      "title": "DeepSeek Doğrudan API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_api",
+      "privacyTier": "standard_api",
+      "payerLabel": "DeepSeek API bakiyesi",
+      "baseUrl": "https://api.deepseek.com/v1",
+      "envBaseUrl": "DEEPSEEK_BASE_URL",
+      "authEnvVars": ["DEEPSEEK_API_KEY"],
+      "ccrProviderAliases": ["deepseek"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "deepseek-v4-flash",
+        "dengeli": "deepseek-v4-pro",
+        "derin-mimari": "deepseek-v4-pro",
+        "kod-sokucu": "deepseek-v4-pro",
+        "uzun-baglam": "deepseek-v4-pro"
+      },
+      "models": [
+        {
+          "id": "deepseek-v4-flash",
+          "title": "DeepSeek V4 Flash",
+          "roles": ["hizli-ucuz", "dengeli"],
+          "capabilities": ["text", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.14,
+          "outputUsdPer1M": 0.28
+        },
+        {
+          "id": "deepseek-v4-pro",
+          "title": "DeepSeek V4 Pro",
+          "roles": ["dengeli", "derin-mimari", "kod-sokucu", "uzun-baglam"],
+          "capabilities": ["text", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.55,
+          "outputUsdPer1M": 2.19
+        },
+        {
+          "id": "deepseek-chat",
+          "title": "DeepSeek V3 Chat",
+          "roles": ["hizli-ucuz", "dengeli", "kod-sokucu"],
+          "capabilities": ["text", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 64000,
+          "inputUsdPer1M": 0.27,
+          "outputUsdPer1M": 1.1
+        },
+        {
+          "id": "deepseek-reasoner",
+          "title": "DeepSeek R1 Reasoner",
+          "roles": ["derin-mimari", "kod-sokucu"],
+          "capabilities": ["text", "reasoning", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 64000,
+          "inputUsdPer1M": 0.55,
+          "outputUsdPer1M": 2.19
+        }
+      ]
+    },
+    {
+      "id": "moonshot",
+      "title": "Moonshot Kimi API (Uzun Bağlam / Akıl Yürütme)",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_api",
+      "privacyTier": "standard_api",
+      "payerLabel": "Moonshot (Kimi) API bakiyesi",
+      "baseUrl": "https://api.moonshot.ai/v1",
+      "envBaseUrl": "MOONSHOT_BASE_URL",
+      "authEnvVars": ["MOONSHOT_API_KEY", "KIMI_API_KEY"],
+      "ccrProviderAliases": ["moonshot", "kimi"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "kimi-k2.5",
+        "dengeli": "kimi-k2.5",
+        "derin-mimari": "kimi-k2.5",
+        "kod-sokucu": "kimi-k2.5",
+        "uzun-baglam": "kimi-k2.5",
+        "gorsel-okuyucu": "kimi-k2.5"
+      },
+      "models": [
+        {
+          "id": "kimi-k2.5",
+          "title": "Kimi K2.5 (256K Bağlam + Görsel)",
+          "roles": ["dengeli", "derin-mimari", "kod-sokucu", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 256000,
+          "inputUsdPer1M": 0.6,
+          "outputUsdPer1M": 2.5
+        }
+      ]
+    },
+    {
+      "id": "minimax",
+      "title": "MiniMax API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_api",
+      "privacyTier": "standard_api",
+      "payerLabel": "MiniMax API bakiyesi",
+      "baseUrl": "https://api.minimax.io/v1",
+      "envBaseUrl": "MINIMAX_BASE_URL",
+      "authEnvVars": ["MINIMAX_API_KEY"],
+      "ccrProviderAliases": ["minimax"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "MiniMax-M2.7-highspeed",
+        "dengeli": "MiniMax-M2.7-highspeed",
+        "derin-mimari": "MiniMax-M2.7",
+        "kod-sokucu": "MiniMax-M2.7",
+        "uzun-baglam": "MiniMax-M2.7"
+      },
+      "models": [
+        {
+          "id": "MiniMax-M2.7",
+          "title": "MiniMax M2.7 (Derin Düşünme)",
+          "roles": ["derin-mimari", "kod-sokucu", "uzun-baglam"],
+          "capabilities": ["text", "reasoning", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 200000,
+          "inputUsdPer1M": 0.3,
+          "outputUsdPer1M": 1.2
+        },
+        {
+          "id": "MiniMax-M2.7-highspeed",
+          "title": "MiniMax M2.7 Highspeed",
+          "roles": ["hizli-ucuz", "dengeli"],
+          "capabilities": ["text", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 200000,
+          "inputUsdPer1M": 0.3,
+          "outputUsdPer1M": 1.2
+        }
+      ]
+    },
+    {
+      "id": "zai",
+      "title": "Z.ai (Zhipu GLM) API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_or_free_tier",
+      "privacyTier": "standard_api",
+      "payerLabel": "Z.ai (GLM) API kotası / bakiyesi",
+      "baseUrl": "https://api.z.ai/api/paas/v4",
+      "envBaseUrl": "ZAI_BASE_URL",
+      "authEnvVars": ["ZAI_API_KEY", "ZHIPU_API_KEY"],
+      "ccrProviderAliases": ["zai", "zhipu"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "glm-4.5-flash",
+        "dengeli": "glm-4.7-flash",
+        "derin-mimari": "glm-4.7-flash",
+        "kod-sokucu": "glm-4.7-flash",
+        "uzun-baglam": "glm-4.7-flash"
+      },
+      "models": [
+        {
+          "id": "glm-4.5-flash",
+          "title": "GLM 4.5 Flash",
+          "roles": ["hizli-ucuz", "dengeli"],
+          "capabilities": ["text", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "glm-4.7-flash",
+          "title": "GLM 4.7 Flash",
+          "roles": ["hizli-ucuz", "dengeli", "derin-mimari", "kod-sokucu", "uzun-baglam"],
+          "capabilities": ["text", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.05,
+          "outputUsdPer1M": 0.2
+        }
+      ]
+    },
+    {
+      "id": "mistral",
+      "title": "Mistral / Codestral API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_or_free_tier",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "Mistral La Plateforme kotası / API kredisi",
+      "baseUrl": "https://api.mistral.ai/v1",
+      "envBaseUrl": "MISTRAL_BASE_URL",
+      "authEnvVars": ["MISTRAL_API_KEY", "CODESTRAL_API_KEY"],
+      "ccrProviderAliases": ["mistral", "codestral"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "mistral-small-latest",
+        "dengeli": "mistral-medium-latest",
+        "derin-mimari": "magistral-medium-latest",
+        "kod-sokucu": "codestral-latest",
+        "uzun-baglam": "mistral-large-latest",
+        "gorsel-okuyucu": "pixtral-large-latest",
+        "vektor-gomme": "mistral-embed"
+      },
+      "models": [
+        {
+          "id": "codestral-latest",
+          "title": "Codestral (Kod Uzmanı)",
+          "roles": ["kod-sokucu", "hizli-ucuz"],
+          "capabilities": ["text", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 256000,
+          "inputUsdPer1M": 0.3,
+          "outputUsdPer1M": 0.9
+        },
+        {
+          "id": "pixtral-large-latest",
+          "title": "Pixtral Large (Görsel + Metin)",
+          "roles": ["gorsel-okuyucu", "dengeli"],
+          "capabilities": ["text", "vision", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 2.0,
+          "outputUsdPer1M": 6.0
+        }
+      ]
+    },
+    {
+      "id": "cerebras",
+      "title": "Cerebras Ultra-Hızlı Çıkarım API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_or_free_tier",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "Cerebras ücretsiz geliştirici kotası / API kredisi",
+      "baseUrl": "https://api.cerebras.ai/v1",
+      "envBaseUrl": "CEREBRAS_BASE_URL",
+      "authEnvVars": ["CEREBRAS_API_KEY"],
+      "ccrProviderAliases": ["cerebras"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "llama-3.3-70b",
+        "dengeli": "llama-3.3-70b",
+        "derin-mimari": "qwen-3-32b",
+        "kod-sokucu": "qwen-3-32b"
+      },
+      "models": [
+        {
+          "id": "llama-3.3-70b",
+          "title": "Llama 3.3 70B (Cerebras ~2000 tok/sn)",
+          "roles": ["hizli-ucuz", "dengeli"],
+          "capabilities": ["text", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        },
+        {
+          "id": "qwen-3-32b",
+          "title": "Qwen 3 32B (Cerebras)",
+          "roles": ["derin-mimari", "kod-sokucu"],
+          "capabilities": ["text", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 64000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        }
+      ]
+    },
+    {
+      "id": "sambanova",
+      "title": "SambaNova Cloud API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_or_free_tier",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "SambaNova ücretsiz geliştirici katmanı / API kredisi",
+      "baseUrl": "https://api.sambanova.ai/v1",
+      "envBaseUrl": "SAMBANOVA_BASE_URL",
+      "authEnvVars": ["SAMBANOVA_API_KEY"],
+      "ccrProviderAliases": ["sambanova"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "Meta-Llama-3.3-70B-Instruct",
+        "dengeli": "DeepSeek-V3-0324",
+        "derin-mimari": "DeepSeek-R1"
+      },
+      "models": [
+        {
+          "id": "DeepSeek-R1",
+          "title": "DeepSeek R1 (SambaNova)",
+          "roles": ["derin-mimari", "kod-sokucu"],
+          "capabilities": ["text", "reasoning", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 64000,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        }
+      ]
+    },
+    {
+      "id": "groq",
+      "title": "Groq Hızlı Çıkarım API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_or_free_tier",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "Groq ücretsiz/kullandıkça öde kotası",
+      "baseUrl": "https://api.groq.com/openai/v1",
+      "envBaseUrl": "GROQ_BASE_URL",
+      "authEnvVars": ["GROQ_API_KEY"],
+      "ccrProviderAliases": ["groq"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "llama-3.3-70b-versatile",
+        "dengeli": "llama-3.3-70b-versatile",
+        "derin-mimari": "deepseek-r1-distill-llama-70b",
+        "kod-sokucu": "qwen-2.5-coder-32b",
+        "uzun-baglam": "llama-3.3-70b-versatile"
+      },
+      "models": [
+        {
+          "id": "llama-3.3-70b-versatile",
+          "title": "Llama 3.3 70B (Groq)",
+          "roles": ["hizli-ucuz", "dengeli", "uzun-baglam"],
+          "capabilities": ["text", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.59,
+          "outputUsdPer1M": 0.79
+        }
+      ]
+    },
+    {
+      "id": "xai",
+      "title": "xAI (Grok) API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_api",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "xAI API kredisi",
+      "baseUrl": "https://api.x.ai/v1",
+      "envBaseUrl": "XAI_BASE_URL",
+      "authEnvVars": ["XAI_API_KEY"],
+      "ccrProviderAliases": ["xai", "grok"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "grok-3-mini",
+        "dengeli": "grok-3",
+        "derin-mimari": "grok-3",
+        "kod-sokucu": "grok-3",
+        "gorsel-okuyucu": "grok-2-vision-latest"
+      },
+      "models": [
+        {
+          "id": "grok-3",
+          "title": "Grok 3",
+          "roles": ["dengeli", "derin-mimari", "kod-sokucu"],
+          "capabilities": ["text", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 131072,
+          "inputUsdPer1M": 3.0,
+          "outputUsdPer1M": 15.0
+        }
+      ]
+    },
+    {
+      "id": "together-fireworks",
+      "title": "Together AI / Fireworks AI Açık Ağırlık API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_api",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "Together / Fireworks API kredisi",
+      "baseUrl": "https://api.together.xyz/v1",
+      "envBaseUrl": "TOGETHER_BASE_URL",
+      "authEnvVars": ["TOGETHER_API_KEY", "FIREWORKS_API_KEY"],
+      "ccrProviderAliases": ["together", "fireworks"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        "derin-mimari": "deepseek-ai/DeepSeek-R1",
+        "kod-sokucu": "Qwen/Qwen2.5-Coder-32B-Instruct"
+      },
+      "models": [
+        {
+          "id": "deepseek-ai/DeepSeek-R1",
+          "title": "DeepSeek R1 (Together)",
+          "roles": ["derin-mimari", "kod-sokucu"],
+          "capabilities": ["text", "reasoning", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 128000,
+          "inputUsdPer1M": 0.55,
+          "outputUsdPer1M": 2.19
+        }
+      ]
+    },
+    {
+      "id": "google-gemini",
+      "title": "Google Gemini API",
+      "kind": "http-api",
+      "driver": "gemini-native",
+      "billingMode": "metered_or_free_tier",
+      "privacyTier": "mixed_provider_policy",
+      "payerLabel": "Google AI Studio ücretsiz katmanı veya faturalı API",
+      "baseUrl": "https://generativelanguage.googleapis.com/v1beta",
+      "envBaseUrl": "GEMINI_BASE_URL",
+      "authEnvVars": ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
+      "ccrProviderAliases": ["gemini", "google"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "gemini-2.5-flash",
+        "dengeli": "gemini-2.5-flash",
+        "derin-mimari": "gemini-2.5-pro",
+        "kod-sokucu": "gemini-2.5-pro",
+        "uzun-baglam": "gemini-2.5-flash",
+        "gorsel-okuyucu": "gemini-2.5-flash",
+        "vektor-gomme": "text-embedding-004"
+      },
+      "models": [
+        {
+          "id": "gemini-2.5-flash",
+          "title": "Gemini 2.5 Flash (1M Bağlam + Görsel/Ses)",
+          "roles": ["hizli-ucuz", "dengeli", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "audio", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 1000000,
+          "inputUsdPer1M": 0.15,
+          "outputUsdPer1M": 0.6
+        },
+        {
+          "id": "gemini-2.5-pro",
+          "title": "Gemini 2.5 Pro (1M Bağlam + Derin Akıl Yürütme)",
+          "roles": ["derin-mimari", "kod-sokucu", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "audio", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 1000000,
+          "inputUsdPer1M": 1.25,
+          "outputUsdPer1M": 10.0
+        },
+        {
+          "id": "text-embedding-004",
+          "title": "Gemini Text Embedding 004",
+          "roles": ["vektor-gomme"],
+          "capabilities": ["embedding"],
+          "trainsOnData": false,
+          "contextWindow": 8192,
+          "inputUsdPer1M": 0.0,
+          "outputUsdPer1M": 0.0
+        }
+      ]
+    },
+    {
+      "id": "openai",
+      "title": "OpenAI Doğrudan API",
+      "kind": "http-api",
+      "driver": "openai-compatible",
+      "billingMode": "metered_api",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "OpenAI API kredisi",
+      "baseUrl": "https://api.openai.com/v1",
+      "envBaseUrl": "OPENAI_BASE_URL",
+      "authEnvVars": ["OPENAI_API_KEY"],
+      "ccrProviderAliases": ["openai"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "gpt-4.1-mini",
+        "dengeli": "gpt-4.1",
+        "derin-mimari": "o3",
+        "kod-sokucu": "gpt-4.1",
+        "uzun-baglam": "gpt-4.1",
+        "gorsel-okuyucu": "gpt-4.1",
+        "vektor-gomme": "text-embedding-3-small"
+      },
+      "models": [
+        {
+          "id": "gpt-4.1-mini",
+          "title": "GPT-4.1 Mini",
+          "roles": ["hizli-ucuz", "dengeli", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 1000000,
+          "inputUsdPer1M": 0.4,
+          "outputUsdPer1M": 1.6
+        },
+        {
+          "id": "gpt-4.1",
+          "title": "GPT-4.1",
+          "roles": ["dengeli", "derin-mimari", "kod-sokucu", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 1000000,
+          "inputUsdPer1M": 2.0,
+          "outputUsdPer1M": 8.0
+        },
+        {
+          "id": "text-embedding-3-small",
+          "title": "OpenAI Embedding 3 Small",
+          "roles": ["vektor-gomme"],
+          "capabilities": ["embedding"],
+          "trainsOnData": false,
+          "contextWindow": 8191,
+          "inputUsdPer1M": 0.02,
+          "outputUsdPer1M": 0.0
+        }
+      ]
+    },
+    {
+      "id": "anthropic",
+      "title": "Anthropic Claude Doğrudan API",
+      "kind": "http-api",
+      "driver": "anthropic-native",
+      "billingMode": "metered_api",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "Anthropic API kredisi",
+      "baseUrl": "https://api.anthropic.com/v1",
+      "envBaseUrl": "ANTHROPIC_BASE_URL",
+      "authEnvVars": ["ANTHROPIC_API_KEY"],
+      "ccrProviderAliases": ["anthropic"],
+      "modelsEndpoint": "/models",
+      "roleDefaults": {
+        "hizli-ucuz": "claude-haiku-4-5",
+        "dengeli": "claude-sonnet-4-5",
+        "derin-mimari": "claude-opus-4-5",
+        "kod-sokucu": "claude-sonnet-4-5",
+        "uzun-baglam": "claude-sonnet-4-5",
+        "gorsel-okuyucu": "claude-sonnet-4-5"
+      },
+      "models": [
+        {
+          "id": "claude-haiku-4-5",
+          "title": "Claude Haiku 4.5",
+          "roles": ["hizli-ucuz", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 200000,
+          "inputUsdPer1M": 1.0,
+          "outputUsdPer1M": 5.0
+        },
+        {
+          "id": "claude-sonnet-4-5",
+          "title": "Claude Sonnet 4.5",
+          "roles": ["dengeli", "derin-mimari", "kod-sokucu", "uzun-baglam", "gorsel-okuyucu"],
+          "capabilities": ["text", "vision", "reasoning", "json_schema", "tools", "streaming"],
+          "trainsOnData": false,
+          "contextWindow": 200000,
+          "inputUsdPer1M": 3.0,
+          "outputUsdPer1M": 15.0
+        }
+      ]
+    },
+    {
+      "id": "router-gateway",
+      "title": "Yerel / VPS Model Yönlendirici (OmniRoute · CCR · LiteLLM)",
+      "kind": "local-or-remote-service",
+      "driver": "openai-compatible",
+      "billingMode": "router_delegated",
+      "privacyTier": "self_hosted_gateway",
+      "payerLabel": "Bağlı yönlendirici hesabı (OmniRoute / CCR / LiteLLM)",
+      "baseUrl": "http://127.0.0.1:3456/v1",
+      "probeUrls": [
+        "http://127.0.0.1:3456/v1/models",
+        "http://127.0.0.1:20128/v1/models",
+        "http://127.0.0.1:4000/v1/models"
+      ],
+      "remoteProbePorts": [3456, 20128, 4000],
+      "envBaseUrl": "MODEL_ROUTER_BASE_URL",
+      "authEnvVars": ["MODEL_ROUTER_API_KEY", "CCR_API_KEY", "LITELLM_API_KEY"],
+      "configFootprints": ["~/.claude-code-router/config.json", "~/.omniroute/config.json"],
+      "roleDefaults": {
+        "hizli-ucuz": "router-default-fast",
+        "dengeli": "router-default",
+        "derin-mimari": "router-default-reasoning",
+        "kod-sokucu": "router-default-coder",
+        "uzun-baglam": "router-default-long"
+      },
+      "models": []
+    },
+    {
+      "id": "ollama",
+      "title": "Ollama (Ücretsiz Yerel Modeller)",
+      "kind": "local-or-remote-service",
+      "driver": "openai-compatible",
+      "billingMode": "free_local",
+      "privacyTier": "private_local",
+      "payerLabel": "Yerel donanım — ek API ücreti yok ($0.00)",
+      "baseUrl": "http://127.0.0.1:11434/v1",
+      "probeUrls": ["http://127.0.0.1:11434/api/tags"],
+      "remoteProbePorts": [11434],
+      "envBaseUrl": "OLLAMA_BASE_URL",
+      "authEnvVars": [],
+      "roleDefaults": {
+        "hizli-ucuz": "qwen2.5-coder:7b",
+        "dengeli": "llama3.1:8b",
+        "derin-mimari": "deepseek-r1:14b",
+        "kod-sokucu": "qwen2.5-coder:14b",
+        "uzun-baglam": "llama3.1:8b",
+        "gorsel-okuyucu": "llama3.2-vision:11b",
+        "vektor-gomme": "nomic-embed-text"
+      },
+      "models": []
+    },
+    {
+      "id": "lmstudio",
+      "title": "LM Studio / llama.cpp / vLLM Yerel Sunucu",
+      "kind": "local-or-remote-service",
+      "driver": "openai-compatible",
+      "billingMode": "free_local",
+      "privacyTier": "private_local",
+      "payerLabel": "Yerel donanım — ek API ücreti yok ($0.00)",
+      "baseUrl": "http://127.0.0.1:1234/v1",
+      "probeUrls": ["http://127.0.0.1:1234/v1/models", "http://127.0.0.1:8000/v1/models"],
+      "remoteProbePorts": [1234, 8000, 8080],
+      "envBaseUrl": "LMSTUDIO_BASE_URL",
+      "authEnvVars": [],
+      "roleDefaults": {
+        "hizli-ucuz": "local-model",
+        "dengeli": "local-model",
+        "derin-mimari": "local-model",
+        "kod-sokucu": "local-model",
+        "uzun-baglam": "local-model"
+      },
+      "models": []
+    },
+    {
+      "id": "cli-codex",
+      "title": "OpenAI Codex CLI Ajanı",
+      "kind": "cli-agent",
+      "driver": "cli-agent",
+      "billingMode": "subscription_or_key",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "ChatGPT Plus/Pro aboneliği veya OpenAI anahtarı (token kotası izlenir)",
+      "binaries": ["codex"],
+      "versionArgs": ["--version"],
+      "executionModes": {
+        "safe_text": ["exec", "--sandbox", "read-only", "--skip-git-repo-check", "{{PROMPT}}"],
+        "workspace_agent": ["exec", "--sandbox", "workspace-write", "--skip-git-repo-check", "{{PROMPT}}"]
+      },
+      "configFootprints": ["~/.codex"],
+      "authFootprints": ["~/.codex/auth.json"],
+      "authEnvVars": ["OPENAI_API_KEY"],
+      "capabilities": ["text", "reasoning", "code_agent"],
+      "roles": ["dengeli", "derin-mimari", "kod-sokucu", "uzun-baglam"],
+      "contextWindow": 192000,
+      "rolePriority": 88
+    },
+    {
+      "id": "cli-claude",
+      "title": "Claude Code CLI Ajanı",
+      "kind": "cli-agent",
+      "driver": "cli-agent",
+      "billingMode": "subscription_or_key",
+      "privacyTier": "zero_training_enterprise",
+      "payerLabel": "Claude Pro/Max aboneliği veya yönlendirici (token kotası izlenir)",
+      "binaries": ["claude"],
+      "versionArgs": ["--version"],
+      "executionModes": {
+        "safe_text": ["-p", "{{PROMPT}}", "--tools", "", "--output-format", "json"],
+        "workspace_agent": ["-p", "{{PROMPT}}", "--output-format", "json"]
+      },
+      "configFootprints": ["~/.claude", "~/.claude.json"],
+      "authFootprints": ["~/.claude/.credentials.json"],
+      "authEnvVars": ["ANTHROPIC_API_KEY"],
+      "capabilities": ["text", "reasoning", "json_schema", "code_agent"],
+      "roles": ["dengeli", "derin-mimari", "kod-sokucu", "uzun-baglam"],
+      "contextWindow": 200000,
+      "rolePriority": 92
+    },
+    {
+      "id": "cli-opencode",
+      "title": "OpenCode CLI Ajanı (Çoklu Model / NVIDIA / DeepSeek Destekli)",
+      "kind": "cli-agent",
+      "driver": "cli-agent",
+      "billingMode": "provider_delegated",
+      "privacyTier": "mixed_provider_policy",
+      "payerLabel": "OpenCode içine bağlı model sağlayıcısı",
+      "binaries": ["opencode"],
+      "versionArgs": ["--version"],
+      "executionModes": {
+        "safe_text": ["run", "--format", "json", "{{PROMPT}}"],
+        "workspace_agent": ["run", "{{PROMPT}}"]
+      },
+      "configFootprints": ["~/.config/opencode", "~/.local/share/opencode"],
+      "authFootprints": ["~/.local/share/opencode/auth.json"],
+      "authEnvVars": [],
+      "capabilities": ["text", "reasoning", "code_agent"],
+      "roles": ["hizli-ucuz", "dengeli", "derin-mimari", "kod-sokucu", "uzun-baglam"],
+      "contextWindow": 128000,
+      "rolePriority": 84
+    },
+    {
+      "id": "cli-gemini",
+      "title": "Google Gemini CLI Ajanı",
+      "kind": "cli-agent",
+      "driver": "cli-agent",
+      "billingMode": "subscription_or_free_tier",
+      "privacyTier": "mixed_provider_policy",
+      "payerLabel": "Google hesabı kotası veya Gemini API anahtarı",
+      "binaries": ["gemini"],
+      "versionArgs": ["--version"],
+      "executionModes": {
+        "safe_text": ["-p", "{{PROMPT}}", "--output-format", "json"],
+        "workspace_agent": ["-p", "{{PROMPT}}"]
+      },
+      "configFootprints": ["~/.gemini"],
+      "authFootprints": ["~/.gemini/oauth_creds.json", "~/.gemini/google_accounts.json"],
+      "authEnvVars": ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
+      "capabilities": ["text", "vision", "reasoning", "code_agent"],
+      "roles": ["hizli-ucuz", "dengeli", "derin-mimari", "uzun-baglam", "gorsel-okuyucu"],
+      "contextWindow": 1000000,
+      "rolePriority": 85
+    },
+    {
+      "id": "cli-aider",
+      "title": "Aider CLI Ajanı (Git Tabanlı Kodlama)",
+      "kind": "cli-agent",
+      "driver": "cli-agent",
+      "billingMode": "provider_delegated",
+      "privacyTier": "mixed_provider_policy",
+      "payerLabel": "Aider içine tanımlı API anahtarı",
+      "binaries": ["aider"],
+      "versionArgs": ["--version"],
+      "executionModes": {
+        "safe_text": ["--message", "{{PROMPT}}", "--no-git", "--no-auto-commits", "--yes-always"],
+        "workspace_agent": ["--message", "{{PROMPT}}", "--yes-always"]
+      },
+      "configFootprints": ["~/.aider.conf.yml"],
+      "authFootprints": ["~/.aider.conf.yml"],
+      "authEnvVars": ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "DEEPSEEK_API_KEY", "OPENROUTER_API_KEY"],
+      "capabilities": ["text", "code_agent"],
+      "roles": ["kod-sokucu", "dengeli"],
+      "contextWindow": 128000,
+      "rolePriority": 78
+    },
+    {
+      "id": "cli-goose",
+      "title": "Block Goose CLI Ajanı (MCP Otomasyon Ajanı)",
+      "kind": "cli-agent",
+      "driver": "cli-agent",
+      "billingMode": "provider_delegated",
+      "privacyTier": "mixed_provider_policy",
+      "payerLabel": "Goose profilindeki sağlayıcı",
+      "binaries": ["goose"],
+      "versionArgs": ["--version"],
+      "executionModes": {
+        "safe_text": ["run", "--text", "{{PROMPT}}"],
+        "workspace_agent": ["run", "--text", "{{PROMPT}}"]
+      },
+      "configFootprints": ["~/.config/goose"],
+      "authFootprints": ["~/.config/goose/config.yaml"],
+      "authEnvVars": ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY"],
+      "capabilities": ["text", "tools", "code_agent"],
+      "roles": ["dengeli", "kod-sokucu"],
+      "contextWindow": 128000,
+      "rolePriority": 77
+    },
+    {
+      "id": "cli-qwen",
+      "title": "Qwen Code CLI Ajanı",
+      "kind": "cli-agent",
+      "driver": "cli-agent",
+      "billingMode": "subscription_or_free_tier",
+      "privacyTier": "mixed_provider_policy",
+      "payerLabel": "Qwen OAuth kotası veya DashScope/OpenAI-uyumlu anahtar",
+      "binaries": ["qwen"],
+      "versionArgs": ["--version"],
+      "executionModes": {
+        "safe_text": ["-p", "{{PROMPT}}"],
+        "workspace_agent": ["-p", "{{PROMPT}}"]
+      },
+      "configFootprints": ["~/.qwen"],
+      "authFootprints": ["~/.qwen/oauth_creds.json"],
+      "authEnvVars": ["DASHSCOPE_API_KEY", "OPENAI_API_KEY"],
+      "capabilities": ["text", "code_agent"],
+      "roles": ["hizli-ucuz", "kod-sokucu", "dengeli"],
+      "contextWindow": 128000,
+      "rolePriority": 80
+    }
+  ]
+}

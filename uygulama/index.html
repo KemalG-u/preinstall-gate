@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Ürün Tanı · Kapı</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="laboratuvar.css">
+  <script src="ornek-veri.js" defer></script>
+  <script src="model-paket.js" defer></script>
+  <script src="workflow.js" defer></script>
+  <script src="source.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="kapi-akis.js" defer></script>
+  <script src="laboratuvar.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#icerik">İçeriğe geç</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#basla" aria-label="Ürün Tanı ana sayfası">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        Ürün Tanı <span class="brand-badge">Kapı</span>
+      </a>
+      <nav class="lab-navigation" aria-label="Ürün Tanı bölümleri"><a id="lab-nav-link" href="#laboratuvar">Laboratuvar</a><a href="#kendi-aracini-incele">Diğer kaynaklar</a></nav>
+      <a class="new-source" id="new-source" href="#basla" hidden><span aria-hidden="true">＋</span> Yeni kaynak</a>
+    </div>
+  </header>
+  <main id="icerik" tabindex="-1">
+    <section id="laboratuvar" class="laboratory layout-width" aria-labelledby="lab-heading">
+      <div class="lab-heading">
+        <p class="lab-eyebrow">ÜRÜN TANI · GÜVENLİ ARAÇ LABORATUVARI</p>
+        <h1 id="lab-heading">Bir GitHub aracını amacınla tanı, doğrula ve dene</h1>
+        <p>Herkese açık bir Python komut satırı deposunun bağlantısını ve neyi anlamak istediğini yaz. Önce amacına uygunluğunu ve sade iş akışını gör, sonra kendi girdilerinle kapalı ağ yalıtımında (WSL2 + Bubblewrap) çalıştırıp kaydını sakla.</p>
+      </div>
+
+      <section class="lab-card repo-lab-shell" id="repo-lab" aria-labelledby="repo-step1-title">
+        <div class="repo-scope-banner" id="repo-scope-banner">
+          <strong>Desteklenen canlı deneme kapsamı:</strong> Herkese açık Python komut satırı (CLI) depoları (<code>pyproject.toml</code>, <code>setup.cfg</code>, <code>setup.py</code> veya <code>__main__.py</code>) · <strong>WSL2 Ubuntu (Python 3.14) + Bubblewrap + seccomp</strong> · <strong>Varsayılan: Ağ tamamen kapalı</strong>. İkili <code>.whl</code> paketleri denemeden önce ayrı aşamada doğrulanır; model hesabı gerekmez.
+        </div>
+
+        <form id="repo-inspect-form" class="repo-step-block">
+          <h2 id="repo-step1-title">1. Kaynağı ve amacını ekle</h2>
+          <div class="repo-quick-picks" aria-label="Hızlı örnek GitHub depoları">
+            <span class="lab-muted">Örnek bağlantı yoksa tek tıkla doldur:</span>
+            <button type="button" class="repo-quick-chip" data-repo-url="https://github.com/adrienverge/yamllint" data-repo-intent="YAML yapılandırma dosyasındaki girinti ve sözdizimi hatalarını nasıl yakaladığını denemek istiyorum">adrienverge/yamllint (dış paketli YAML denetleyici)</button>
+            <button type="button" class="repo-quick-chip" data-repo-url="https://github.com/astanin/python-tabulate" data-repo-intent="Ham satır verisini düzenli tablo biçimine nasıl dönüştürdüğünü anlamak ve denemek istiyorum">astanin/python-tabulate (tablo biçimleyici)</button>
+            <button type="button" class="repo-quick-chip" data-repo-url="https://github.com/andialbrecht/sqlparse" data-repo-intent="SQL sorgularını nasıl ayrıştırıp okunaklı biçime getirdiğini denemek istiyorum">andialbrecht/sqlparse (SQL biçimleyici)</button>
+          </div>
+          <label for="repo-url">Herkese açık GitHub deposu bağlantısı</label>
+          <input id="repo-url" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Örneğin: https://github.com/adrienverge/yamllint" required>
+          <label for="repo-intent">Ne yapmak veya neyi anlamak istiyorsun?</label>
+          <input id="repo-intent" type="text" maxlength="400" autocomplete="off" placeholder="Örneğin: YAML dosyasındaki girinti ve anahtar tekrarlarını nasıl bulduğunu görmek istiyorum" required>
+          <div class="lab-row">
+            <button type="submit" id="repo-inspect-btn">Depoyu incele</button>
+            <span class="lab-muted">İnceleme aşamasında depodaki hiçbir kod çalıştırılmaz.</span>
+          </div>
+        </form>
+        <p id="repo-status" class="repo-status" role="status" aria-live="polite"></p>
+
+        <section id="repo-step2" class="repo-step-section" hidden aria-labelledby="repo-step2-title">
+          <div class="repo-step-header">
+            <h2 id="repo-step2-title" tabindex="-1">2. Anla: Kime, hangi işte yardımcı olur?</h2>
+            <div id="repo-snapshot-bar" class="repo-snapshot-bar"></div>
+          </div>
+          <div id="repo-intent-fit" class="repo-intent-fit" hidden></div>
+          <div id="repo-support-alert" class="repo-support-alert" hidden></div>
+          <div class="repo-overview-box">
+            <p id="repo-who-what" class="repo-lead"></p>
+            <p id="repo-intent-note" class="lab-muted"></p>
+            <p id="repo-model-note" class="repo-origin-note"></p>
+          </div>
+
+          <details id="repo-limitations-box" class="repo-limitations-box" hidden>
+            <summary id="repo-limitations-summary">İnceleme kapsamı ve dışarıda kalan sınırlar</summary>
+            <ul id="repo-limitations-list" class="repo-evidence-list"></ul>
+          </details>
+
+          <div id="repo-example-box" class="repo-example-box" hidden>
+            <div class="repo-badge-row">
+              <span class="repo-badge badge-example" id="repo-example-badge"></span>
+            </div>
+            <div class="repo-example-grid">
+              <div>
+                <strong>Örnek girdi (statik gösterim)</strong>
+                <pre id="repo-example-in"></pre>
+              </div>
+              <div>
+                <strong>Beklenen dönüşüm biçimi (henüz çalıştırılmadı)</strong>
+                <pre id="repo-example-out"></pre>
+              </div>
+            </div>
+            <p id="repo-example-note" class="lab-muted"></p>
+          </div>
+
+          <div id="repo-jobs-wrap" hidden>
+            <h3>Depoda bulunan gerçek işler <span class="lab-muted">(incelemek ve denemek için birini seç)</span></h3>
+            <div id="repo-jobs-list" class="repo-jobs-list" role="list"></div>
+
+            <div id="repo-job-detail" class="repo-job-detail" hidden>
+              <div class="repo-badge-row">
+                <span class="repo-badge badge-source" id="repo-job-origin"></span>
+                <span class="repo-badge" id="repo-job-consumer-kind"></span>
+              </div>
+              <h4 id="repo-job-title"></h4>
+              <p id="repo-job-summary"></p>
+              <dl class="repo-job-facts">
+                <div><dt>Ne zaman başlar?</dt><dd id="repo-job-trigger"></dd></div>
+                <div><dt>Ne alır?</dt><dd id="repo-job-input"></dd></div>
+                <div><dt>Ne üretir?</dt><dd id="repo-job-output"></dd></div>
+                <div><dt>Sonucu kim kullanır?</dt><dd id="repo-job-consumer"></dd></div>
+              </dl>
+
+              <h4>Basit iş akışı (kutular ve oklar)</h4>
+              <ol id="repo-flow-boxes" class="repo-flow-boxes"></ol>
+
+              <details id="repo-evidence-details">
+                <summary>Teknik dayanak ve kaynak kod satırları (isteğe bağlı aç)</summary>
+                <ul id="repo-evidence-list" class="repo-evidence-list"></ul>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section id="repo-step34" class="repo-step-section" hidden aria-labelledby="repo-step34-title">
+          <h2 id="repo-step34-title" tabindex="-1">3 ve 4. Doğal tüketiciyi doğrula ve A / B girdileriyle dene</h2>
+          <div class="repo-approval-box" id="repo-approval-box">
+            <div>
+              <strong>Güvenlik ve yalıtım sınırı (edinim ile çalıştırma ayrıdır)</strong>
+              <p id="repo-approval-desc">Onay verdiğinde gerekliyse ikili (<code>.whl</code>) paketler ayrı aşamada indirilip SHA-256 ile kilitlenir; ardından kod gerçek dosyalarına, ortam değişkenlerine ve ağa erişemeyen tek kullanımlık WSL2 + Bubblewrap alanında çalıştırılır.</p>
+              <p id="repo-dep-status" class="lab-muted"></p>
+            </div>
+            <button type="button" id="repo-approve-btn">Bu sürüm ve iş için yalıtılmış denemeyi hazırla ve onayla</button>
+          </div>
+
+          <div id="repo-trial-tuning" class="repo-trial-tuning" hidden>
+            <div class="repo-tuning-col">
+              <label for="repo-extra-flags">Komut seçenekleri <span class="lab-muted">(isteğe bağlı; keşfedilen güvenli bayraklar)</span></label>
+              <input id="repo-extra-flags" type="text" maxlength="140" autocomplete="off" spellcheck="false" placeholder="Varsayılan seçeneklerle çalışır">
+              <div id="repo-discovered-flags" class="repo-flag-chips"></div>
+            </div>
+            <div class="repo-tuning-col">
+              <label for="repo-prediction">Çalıştırmadan önce tahminin <span class="lab-muted">(isteğe bağlı öğrenme notu)</span></label>
+              <input id="repo-prediction" type="text" maxlength="240" autocomplete="off" placeholder="Örneğin: İkinci girdide hata satırı veya ek sütun bekliyorum">
+            </div>
+          </div>
+
+          <div id="repo-ab-controls" class="repo-ab-grid" hidden>
+            <div class="repo-slot-card">
+              <label for="repo-input-a">A girdisi <span class="lab-muted">(yapay örnek veriyi düzenleyebilirsin)</span></label>
+              <textarea id="repo-input-a" rows="4" maxlength="4000"></textarea>
+              <button type="button" id="repo-run-a">A girdisiyle çalıştır</button>
+              <div id="repo-result-a" class="repo-run-output" hidden></div>
+            </div>
+            <div class="repo-slot-card">
+              <label for="repo-input-b">B girdisi <span class="lab-muted">(farkı görmek için değiştirilmiş ikinci girdi)</span></label>
+              <textarea id="repo-input-b" rows="4" maxlength="4000"></textarea>
+              <button type="button" id="repo-run-b">B girdisiyle çalıştır</button>
+              <div id="repo-result-b" class="repo-run-output" hidden></div>
+            </div>
+          </div>
+
+          <section id="repo-consumer-proof" class="repo-proof-card" hidden aria-labelledby="repo-consumer-proof-title">
+            <h3 id="repo-consumer-proof-title">3. Adım Kanıtı — Aynı koşuda doğal tüketici doğrulaması</h3>
+            <div id="repo-consumer-proof-body"></div>
+          </section>
+
+          <section id="repo-ab-diff" class="repo-ab-diff" hidden aria-labelledby="repo-ab-diff-title">
+            <h3 id="repo-ab-diff-title">4. Adım Özeti — A ve B karşılaştırması: Ne verdim → Ne çıktı → Ne değişti?</h3>
+            <div id="repo-ab-diff-body"></div>
+          </section>
+
+          <details id="repo-tech-proof" hidden>
+            <summary>Teknik süreç kanıtı (komut gösterimi, çıkış kodu, yalıtım sınırları, özetler)</summary>
+            <div id="repo-tech-proof-body" class="repo-tech-proof-body"></div>
+          </details>
+        </section>
+
+        <section id="repo-step5" class="repo-step-section" hidden aria-labelledby="repo-step5-title">
+          <h2 id="repo-step5-title" tabindex="-1">5. Sıfırla, temiz ortamda tekrar dene ve kaydet</h2>
+          <div class="lab-actions">
+            <button type="button" id="repo-reset-btn" class="lab-secondary">Çalışma alanını sıfırla</button>
+            <button type="button" id="repo-clean-rerun-btn" class="lab-secondary" disabled>Son denemeyi temiz ortamda tekrar çalıştır ve karşılaştır</button>
+            <button type="button" id="repo-export-btn" class="lab-secondary">Kanıt özetini indir (JSON)</button>
+            <span id="repo-reset-note">Kaynak, gerçek dosyaların ve önceki deney kanıtları korunur; yalnızca deney çalışma alanı başa döner.</span>
+          </div>
+          <div id="repo-clean-rerun-box" class="repo-proof-card" hidden></div>
+          <details id="repo-archived-runs" hidden>
+            <summary>Sıfırlama öncesi korunan deney kanıtları</summary>
+            <div id="repo-archived-runs-body"></div>
+          </details>
+
+          <div class="lab-save">
+            <label for="repo-save-name">Bu depo incelemesine isim ver <span class="lab-muted">(uygulamayı kapatıp normal açtığında Kayıtlar’dan geri yüklenir)</span></label>
+            <div class="lab-row">
+              <input id="repo-save-name" type="text" maxlength="120" placeholder="Örneğin: yamllint kural denemesi">
+              <button type="button" id="repo-save-btn">İncelemeyi kaydet</button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <details class="lab-card repo-preset-drawer" id="preset-lab-drawer">
+        <summary>Hazır yerel örneklerle hızlıca dene (Agentic OS / Belge Bulucu)</summary>
+        <div class="preset-lab-inner">
+          <h2>Hazır kaynak seç</h2>
+          <label for="lab-sample">İncelenecek örnek</label>
+          <div class="lab-row"><select id="lab-sample" disabled><option>Örnekler yükleniyor…</option></select><button type="button" id="lab-inspect" disabled>Kaynağı incele</button></div>
+          <p id="lab-sample-description" class="lab-muted"></p>
+          <p id="lab-status" role="status" aria-live="polite"></p>
+          <section class="lab-subcard" id="lab-preview" hidden aria-labelledby="lab-source-title">
+            <h3>2. Kaynağı tanı</h3><h4 id="lab-source-title" tabindex="-1"></h4>
+            <p id="lab-overview"></p><div class="lab-note"><strong>Bu incelemenin kapsamı</strong><p id="lab-scope"></p></div>
+            <button type="button" id="lab-confirm">Bu kaynağı onayla</button>
+          </section>
+          <section class="lab-subcard" id="lab-ready" hidden aria-labelledby="lab-module-title">
+            <h3>3. İşini dene</h3><h4 id="lab-module-title" tabindex="-1"></h4><p id="lab-module-description"></p>
+            <details><summary>Bu işin akışı</summary><ol id="lab-flow"></ol></details>
+            <details><summary>Bu bilgiye nasıl ulaşıldı?</summary><ul id="lab-evidence"></ul></details>
+            <form id="lab-run-form"><div id="lab-input"></div><button type="submit" id="lab-run">Çalıştır</button></form>
+            <section id="lab-result" class="lab-result" hidden aria-labelledby="lab-result-title"><h4 id="lab-result-title" tabindex="-1">Deneme sonucu</h4><p id="lab-given"></p><p id="lab-summary"></p><ul id="lab-details"></ul><p id="lab-usage"></p><p id="lab-result-mode" class="lab-muted"></p></section>
+            <details class="lab-history"><summary>Geçmiş denemeler</summary><div id="lab-history"></div></details>
+            <div class="lab-actions"><button type="button" id="lab-reset" class="lab-secondary">Baştan dene</button><span>Mevcut denemeler temizlenir; kaydettiğin kayıtlar kalır.</span></div>
+            <div class="lab-save"><label for="lab-save-name">Kayda isim ver <span class="lab-muted">(isteğe bağlı)</span></label><div class="lab-row"><input id="lab-save-name" type="text" maxlength="120" placeholder="Örneğin: İlk denemem"><button type="button" id="lab-save" class="lab-secondary">Kaydet</button></div><p class="lab-muted">Kayıt, yapılan denemeleri ve çalışma durumunu saklar. Henüz çalıştırmadığın formdaki değişiklikler kayda eklenmez.</p></div>
+          </section>
+        </div>
+      </details>
+
+      <section class="lab-card" aria-labelledby="lab-saved-title">
+        <h2 id="lab-saved-title">Kayıtlar</h2>
+        <p class="lab-muted">Kaydettiğin GitHub deposu incelemelerini ve hazır örnek çalışmalarını sunucuyu yeniden açtığında buradan bulup açabilir, kanıt özetini indirebilir veya silebilirsin.</p>
+        <div id="lab-saved">Kayıtlar yükleniyor…</div>
+      </section>
+    </section>
+
+    <section id="entry" class="entry layout-width secondary-entry-shell" aria-labelledby="entry-title">
+      <details id="secondary-entry-drawer" class="secondary-entry-drawer">
+        <summary class="secondary-entry-summary">
+          <span>Diğer kaynak kapıları: Yerel MCP dosyası (.py), ZIP, klasör, beceri (<code>SKILL.md</code>) ve JS/TS statik mimari incelemesi</span>
+          <small>İzin farkı denetimi ve yerel dosya yükleme araçları</small>
+        </summary>
+        <div class="secondary-entry-body">
+          <div class="entry-intro">
+            <h1 id="entry-title" tabindex="-1">Kendi yerel dosyanı veya diğer kaynakları incele</h1>
+            <p>Tekil Python MCP dosyalarında ne çalıştı, ne engellendi ve bir güncellemede hangi yeni izin istendi aynı ekrandan takip et; veya JS/TS ve ZIP kaynaklarını statik olarak incele.</p>
+          </div>
+          <section id="gate-flow" class="gate-flow" aria-labelledby="gate-flow-title">
+            <header class="gate-flow-header">
+              <div>
+                <h2 id="gate-flow-title">Belge Bulucu</h2>
+                <p id="gate-flow-intro">Kapı için hazırlanmış örnek. Örnek klasörde PDF arar.</p>
+              </div>
+              <button type="button" class="button secondary" id="gate-flow-reset" hidden>Baştan başla</button>
+            </header>
+            <ol class="gate-flow-steps">
+              <li id="gate-flow-first" aria-current="step">
+                <h3 id="gate-flow-inspect-title">Aracı incele</h3>
+                <p id="gate-flow-inspect-note">Aracın hangi işleri sunduğunu gör.</p>
+                <div class="gate-flow-actions" id="gate-flow-sources">
+                  <button type="button" class="button primary" id="gate-flow-inspect">Aracı incele</button>
+                  <button type="button" class="button gate-flow-quiet" id="gate-flow-pick">Kendi MCP dosyamı seç</button>
+                  <input id="gate-flow-file" type="file" accept=".py" hidden>
+                </div>
+                <p class="field-note" id="gate-flow-file-note">Kendi aracın, tek başına çalışabilen bir Python MCP dosyası olabilir (.py).</p>
+              </li>
+              <li id="gate-flow-second">
+                <h3>Örnekle çalıştır</h3>
+                <p id="gate-flow-run-note">İnceleme tamamlanınca deneyeceğin işi seç.</p>
+                <form id="gate-flow-run" class="gate-flow-run" hidden>
+                  <div>
+                    <label for="gate-flow-tool">Deneceğin iş</label>
+                    <select id="gate-flow-tool"></select>
+                  </div>
+                  <div>
+                    <label for="gate-flow-input">Örnek girdi</label>
+                    <input id="gate-flow-input" type="text" maxlength="1500" autocomplete="off">
+                  </div>
+                  <button type="submit" class="button primary" id="gate-flow-run-button">Örnekle çalıştır</button>
+                </form>
+              </li>
+              <li id="gate-flow-third">
+                <h3>Güncellemeyi karşılaştır</h3>
+                <p id="gate-flow-update-note">Yeni sürümün hangi izinleri istediğini gör.</p>
+                <div class="gate-flow-actions" id="gate-flow-update-actions" hidden>
+                  <button type="button" class="button secondary" id="gate-flow-update">Güncellemeyi karşılaştır</button>
+                  <input id="gate-flow-update-file" type="file" accept=".py" hidden>
+                </div>
+              </li>
+            </ol>
+            <p id="gate-flow-status" class="gate-flow-status" role="status" aria-live="polite" aria-atomic="true"></p>
+            <section id="gate-flow-report" class="gate-flow-report" aria-labelledby="gate-flow-report-title" hidden>
+              <h3 id="gate-flow-report-title" tabindex="-1">Deneme sonucu</h3>
+              <div id="gate-flow-decision" aria-live="polite"></div>
+              <div class="gate-flow-outcomes">
+                <section class="gate-flow-outcome" data-outcome="worked" aria-labelledby="gate-flow-worked-title">
+                  <h4 id="gate-flow-worked-title">Ne çalıştı?</h4>
+                  <div id="gate-flow-worked"></div>
+                </section>
+                <section class="gate-flow-outcome" data-outcome="blocked" aria-labelledby="gate-flow-blocked-title">
+                  <h4 id="gate-flow-blocked-title">Ne engellendi?</h4>
+                  <div id="gate-flow-blocked"></div>
+                </section>
+                <section class="gate-flow-outcome" data-outcome="update" aria-labelledby="gate-flow-added-title">
+                  <h4 id="gate-flow-added-title" tabindex="-1">Yeni izin</h4>
+                  <div id="gate-flow-added"></div>
+                  <div id="gate-flow-update-tools" class="gate-flow-actions" hidden></div>
+                </section>
+              </div>
+              <details id="gate-flow-coverage" class="gate-flow-coverage" hidden>
+                <summary>Ne test edildi, ne test edilmedi?</summary>
+                <div id="gate-flow-checks"></div>
+              </details>
+            </section>
+          </section>
+          <details class="gate-other-sources">
+            <summary>ZIP, klasör, beceri ve statik JS/TS mimari incelemesi</summary>
+            <div class="gate-other-grid">
+              <div class="preset-lab" aria-labelledby="preset-lab-title">
+                <h2 id="preset-lab-title">Diğer hazır güvenlik incelemeleri</h2>
+                <p class="field-note">Beceri ve betiklerde hangi gizli davranışların raporlandığını incele.</p>
+                <div class="preset-cards">
+                  <button type="button" class="preset-card danger" data-preset="tuzakli-beceri">
+                    <strong>Markdown Tablo Düzenleyici (Sahte)</strong>
+                    <span>Gizli bir talimatın ve hassas dosya erişimi işaretinin nasıl raporlandığını gör.</span>
+                  </button>
+                  <button type="button" class="preset-card safe" data-preset="temiz-beceri">
+                    <strong>Yerel Görev (TODO) Çıkarıcı</strong>
+                    <span>Notlardan yapılacak işleri çıkarmak için hazırlanmış bir beceriyi incele.</span>
+                  </button>
+                  <button type="button" class="preset-card warning" data-preset="gizli-ag-araci">
+                    <strong>Hava Durumu MCP Aracı (Şüpheli)</strong>
+                    <span>Bir hava durumu aracında gizli anahtar erişimi işaretlerini incele.</span>
+                  </button>
+                </div>
+              </div>
+              <div class="entry-right">
+                <section class="source-box" aria-labelledby="source-title">
+                  <h2 id="source-title">Statik kaynak veya belge kapısı</h2>
+                  <form id="github-form">
+                    <label for="github-url">JS/TS GitHub deposu veya HTTPS belge bağlantısı</label>
+                    <div class="input-line">
+                      <input id="github-url" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://github.com/sahip/depo" required>
+                      <button class="button primary" type="submit">Statik İncele <span aria-hidden="true">→</span></button>
+                    </div>
+                    <p class="field-note">JavaScript/TypeScript depoları ve belgeler için yalnız statik mimari haritası çıkarır.</p>
+                  </form>
+                  <div class="source-divider"></div>
+                  <div class="local-source">
+                    <p id="local-source-note" class="field-note">ZIP, kod, <code>SKILL.md</code> becerisi veya iş akışı dosyası seçebilirsin.</p>
+                    <div class="local-actions">
+                      <button class="button secondary" type="button" id="pick-file" aria-describedby="local-source-note">Dosya seç</button>
+                      <button class="button secondary" type="button" id="pick-folder" aria-describedby="local-source-note">Klasör seç</button>
+                    </div>
+                    <input id="source-file" type="file" hidden>
+                    <input id="source-folder" type="file" webkitdirectory multiple hidden>
+                  </div>
+                  <p class="entry-status" id="entry-status" role="status" aria-live="polite" hidden></p>
+                  <p class="field-note" id="github-zip-help" hidden><a id="github-zip-link" class="text-link" href="https://github.com/" target="_blank" rel="noopener noreferrer">Depoyu GitHub’da aç ↗</a>. <strong>Code → Download ZIP</strong> ile indirip yukarıdan dosyayı seçebilirsiniz.</p>
+                  <p class="field-note" id="local-service-help" hidden><a class="text-link" href="http://127.0.0.1:4178/">Yerel Ürün Tanı’yı aç →</a></p>
+                </section>
+                <a class="example-entry" href="#agentic/buyuk-resim">
+                  <span class="example-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+                  <span class="example-copy"><small>Önceden incelenmiş mimari</small><strong>Agentic OS 3.0.0</strong><span>Bir yerel yapay zekâ panelinin 15 işlevini seçin, iki örneğini deneyin.</span></span>
+                  <span class="example-action">Örneği aç <span aria-hidden="true">→</span></span>
+                </a>
+              </div>
+            </div>
+          </details>
+        </div>
+      </details>
+    </section>
+    <div id="workspace" class="workspace layout-width" hidden></div>
+    <noscript><p class="noscript">Ürün Tanı’nın kaynak okuma ve örnekleri çalıştırma işlevleri JavaScript gerektirir.</p></noscript>
+  </main>
+</body>
+</html>

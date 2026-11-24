@@ -1,0 +1,13 @@
+{
+  "name": "urun-tani",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "Inspect an AI tool or skill before you install it.",
+  "engines": { "node": ">=22.18.0" },
+  "scripts": {
+    "start": "node uygulama/sunucu.cjs",
+    "test": "node --test moduller/model-kapisi/test/faz1-kesif.test.cjs moduller/proje-hafizasi/test/proje-hafizasi.test.cjs uygulama/laboratuvar-kontrol.cjs",
+    "test:depo": "node --test uygulama/depo-laboratuvar-kontrol.cjs"
+  }
+}
