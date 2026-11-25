@@ -1,12 +1,12 @@
 > 🚧 **Status: active development.** It works for the author; interfaces may change.
 
-# preinstall-gate ("Ürün Tanı · Kapı", Turkish for "Product Inspection · Gate")
+# preinstall-gate
 
 [Türkçe README](README.tr.md)
 
 A local web app that helps you look at an AI tool, skill or MCP server **before** you install it. Point it at a GitHub repository, a `SKILL.md`, a ZIP file or local files and it explains in plain language what the tool offers, which behaviours and security-relevant signs it can see in the code, and what it could not check. A "gate" trial can run a small sample tool in a separate environment with an allow-list of actions and show which permissions an update asks for again.
 
-The user interface and most documentation inside the code are in Turkish; this README and the repository metadata are in English.
+Its Turkish working name is "Ürün Tanı · Kapı" ("Product Inspection · Gate"). The user interface and most documentation inside the code are in Turkish; this README and the repository metadata are in English.
 
 ## Why
 

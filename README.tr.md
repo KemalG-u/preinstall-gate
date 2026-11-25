@@ -1,10 +1,12 @@
 > 🚧 **Durum: aktif geliştirme.** Yazarın kullanımında çalışıyor; arayüzler değişebilir.
 
-# preinstall-gate ("Ürün Tanı · Kapı")
+# preinstall-gate
 
 [English README](README.md)
 
 Bir yapay zekâ aracını, beceriyi ya da MCP sunucusunu **kurmadan önce** incelemenize yardım eden yerel web uygulaması. Bir GitHub deposunu, `SKILL.md` dosyasını, ZIP'i ya da yerel dosyaları verirsiniz; araç neler sunuyor, kodda hangi davranışlar ve güvenlik işaretleri görünüyor, nelerin kontrol edilemediği sade Türkçeyle anlatılır. "Kapı" denemesi, küçük bir örnek aracı izin listesiyle ayrı bir ortamda çalıştırabilir ve bir güncellemenin hangi izinleri yeniden istediğini gösterir.
+
+Çalışma adı "Ürün Tanı · Kapı"dır.
 
 ## Depoda ne var
 
